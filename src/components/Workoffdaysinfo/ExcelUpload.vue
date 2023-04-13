@@ -1,0 +1,179 @@
+<script setup>
+import { ref, onMounted, watchEffect } from 'vue'
+import * as xlsx from "xlsx";
+import { saveAs } from 'file-saver';//匯出excel用
+import { ElLoading } from 'element-plus'//Loading加載
+import Swal from "sweetalert2";
+import { $upLoadInfo } from '../../api/workoffdaysinfo/upload'
+import { readFile, character, delay } from '../../utils/utils'
+import { useWorkoffdaysinfoStore } from "../../stores/workoffdaysinfo/workoffdaysinfo";
+const store = useWorkoffdaysinfoStore();
+// Set default properties
+let toast = Swal.mixin({
+    buttonsStyling: false,
+    target: "#page-container",
+    customClass: {
+        confirmButton: "btn btn-success m-1",
+        cancelButton: "btn btn-danger m-1",
+        input: "form-control",
+    },
+});
+let arr = []
+const handle = async (ev) => {
+    //日期格式不對的方式 直接轉換
+    console.log(ev);
+    let file = ev.raw
+    if (!file) return
+    let data = await readFile(file)
+    let workbook = xlsx.read(data, { type: 'binary' })
+    let worksheet = workbook.Sheets[workbook.SheetNames[0]]
+    data = xlsx.utils.sheet_to_json(worksheet)
+    console.log(data);
+    data.forEach(item => {
+        console.log(item.不供應預設餐日期);
+        if (item.不供應預設餐日期) {
+            let dateValue = new Date((item.不供應預設餐日期 - (25567 + 2)) * 86400 * 1000)
+            item.不供應預設餐日期 = formatDate(dateValue, 'yyyy-MM-dd')
+        }
+        item = Object.fromEntries(
+            Object.entries(item).map(([key, value]) => [key, value.toString()])
+        );
+        arr.push(item)
+        console.log(arr);
+    })
+    // let arrStr = JSON.stringify(arr);
+    // console.log(arrStr);
+    if (arr.length > 0) {
+        toast.fire("提交成功", "接著點選匯入Excel匯入!", "info");
+
+        //toast.fire("提交成功接著點選匯入Excel匯入");
+    } else {
+        toast.fire("warning", "匯入資料失敗，請重新提交!", "warning")
+        //toast.fire("請確認匯入資料");
+    }
+}
+
+function formatDate(date, fmt) {
+    let o = {
+        'M+': date.getMonth() + 1,
+        'd+': date.getDate(),
+        'h+': date.getHours(),
+        'm+': date.getMinutes(),
+        's+': date.getSeconds(),
+        'q+': Math.floor((date.getMonth() + 3) / 3),
+        S: date.getMilliseconds()
+    }
+    if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+    }
+    for (let k in o) {
+        if (new RegExp('(' + k + ')').test(fmt)) {
+            fmt = fmt.replace(
+                RegExp.$1,
+                RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
+            )
+        }
+    }
+    return fmt
+}
+const submit = async () => {
+    //這是異步
+    // let loadingInstance = ElLoading.service({
+    //     text: "稍待片刻",
+    //     background: "rgba(0,0,0,.5)"
+    // })
+    //await delay(3000)//等待讓畫面出面
+    //數據一條一條上傳
+    let n = 0
+    let send = async () => {
+        if (n > arr.length - 1) {
+            console.log("傳遞完畢");
+            //完成的function
+            toast.fire("匯入成功", "成功更新員工資料!", "success");
+            // store.isChange.click()
+            return
+        }
+        console.log(arr);
+        console.log(arr[n]);
+        let body = []
+        body.push(arr[n])
+        console.log(body);
+        let isupLoad = await $upLoadInfo(body)
+        if (isupLoad) {
+            n++
+            console.log(n);
+            //console.log("回調開始");
+            send()
+        } else {
+            console.log(n + 2);//Excel表格的問題
+            console.log("提交失败");
+            toast.fire("匯入失敗", `Excel第${n + 2}格格式錯誤!`, "error");
+            return
+            //loadingInstance.close()//
+        }
+
+    }
+    send()
+}
+const getEmployeesInfo = () => {
+    var a = document.createElement("a");
+    a.href = "/static/年度行事曆匯入.xlsx";
+    a.download = "年度行事曆匯入.xlsx";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+onMounted(() => {
+
+})
+</script>
+
+<template>
+    <div class="content">
+        <div class="row">
+            <div class="d-flex justify-content-end">
+                <el-upload class="upLoad-select" action accept=".xlsx,.xls" :auto-upload="false" :show-file-list="false"
+                    :on-change="handle">
+                    <el-button type="primary" slot="trigger">選取 Excel 文件</el-button>
+                </el-upload>
+                <el-button type="success" @click="submit">匯入Excel 文件</el-button>
+                <el-button type="danger" data-bs-toggle="tooltip" data-bs-placement="right" title="right Tooltip"
+                    @click="getEmployeesInfo">
+                    匯出EXCEL
+                </el-button>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-alt-secondary push" @click="swalInfo" v-show="false"></button>
+</template>
+<style lang="scss" scoped>
+.upLoad-select {
+    margin-right: 10px !important;
+}
+
+.buttonBox {
+    padding: 15px;
+    display: flex;
+    width: 35%;
+    justify-content: flex-start;
+
+    & .el-button {
+        margin-right: 20px !important;
+    }
+}
+
+.tableBox {
+    padding: 0 15px;
+
+    h3 {
+        font-size: 18px;
+        color: #f56c6c;
+        padding-bottom: 15px;
+    }
+}
+</style>
+<style lang="scss">
+// SweetAlert2
+@import "sweetalert2/dist/sweetalert2.min.css";
+</style>

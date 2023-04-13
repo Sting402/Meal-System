@@ -1,0 +1,112 @@
+[  
+  {
+    "dep": "CBD",
+    "manu": "10",
+    "manu1": "10",
+    "manu2": "10",
+    "manu3": "10",
+    "manu4": "10",
+    "manu5": "10",
+    "manu6": "10",
+    "storage": "60"
+  },
+  {
+    "dep": "CY",
+    "manu": "10",
+    "manu1": "50",
+    "manu2": "20",
+    "manu3": "20",
+    "manu4": "20",
+    "manu5": "20",
+    "manu6": "20",
+    "storage": "50"
+  },
+  {
+    "dep": "JK8",
+    "manu": "0",
+    "manu1": "0",
+    "manu2": "0",
+    "manu3": "10",
+    "manu4": "10",
+    "manu5": "0",
+    "manu6": "20",
+    "storage": "20"
+  },
+  {
+    "dep": "JKS-2F",
+    "manu": "20",
+    "manu1": "10",
+    "manu2": "10",
+    "manu3": "0",
+    "manu4": "0",
+    "manu5": "0",
+    "manu6": "0",
+    "storage": "20"
+  },
+  {
+    "dep": "JKS-3",
+    "manu": "10",
+    "manu1": "0",
+    "manu2": "20",
+    "manu3": "0",
+    "manu4": "20",
+    "manu5": "0",
+    "manu6": "20",
+    "storage": "0"
+  },
+  {
+    "dep": "LI",
+    "manu": "0",
+    "manu1": "0",
+    "manu2": "0",
+    "manu3": "0",
+    "manu4": "10",
+    "manu5": "10",
+    "manu6": "0",
+    "storage": "20"
+  },
+  {
+    "dep": "TC-2F",
+    "manu": "20",
+    "manu1": "0",
+    "manu2": "0",
+    "manu3": "10",
+    "manu4": "0",
+    "manu5": "20",
+    "manu6": "20",
+    "storage": "20"
+  },
+  {
+    "dep": "TC-3F",
+    "manu": "20",
+    "manu1": "20",
+    "manu2": "20",
+    "manu3": "0",
+    "manu4": "20",
+    "manu5": "0",
+    "manu6": "20",
+    "storage": "20"
+  },
+  {
+    "dep": "TRI",
+    "manu": "0",
+    "manu1": "0",
+    "manu2": "0",
+    "manu3": "0",
+    "manu4": "0",
+    "manu5": "0",
+    "manu6": "0",
+    "storage": "20"
+  },
+  {
+    "dep": "WQ",
+    "manu": "20",
+    "manu1": "0",
+    "manu2": "10",
+    "manu3": "10",
+    "manu4": "10",
+    "manu5": "0",
+    "manu6": "0",
+    "storage": "20"
+  }
+]

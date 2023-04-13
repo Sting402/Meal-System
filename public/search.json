@@ -1,0 +1,18 @@
+{
+    "list": [
+        {
+            "title": "公告",
+            "upAndDown": "有",
+            "start": "2023-01-18",
+            "end": "2023-01-20",
+            "staff": "Steven"
+        },
+        {
+            "title": "新聞",
+            "upAndDown": "有",
+            "start": "2023-01-18",
+            "end": "2023-01-20",
+            "staff": "Terry"
+        }
+    ]
+}
