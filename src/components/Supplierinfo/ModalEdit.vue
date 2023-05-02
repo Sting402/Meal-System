@@ -151,17 +151,36 @@ async function handleEdit() {
         .map(option => option)
         .join(',');
     console.log(resultSelectProvide_Sites);
+    console.log();
     try {
-        let editSupplier = await $editSupplier({
-            supplier_ID: stateEdit.supplier_ID,
-            supplier_Name: stateEdit.supplier_Name,
-            address: stateEdit.address,
-            telphone: stateEdit.telphone,
-            email: stateEdit.email,
-            mealType: resultSelect,
-            mealOrder: NewResultSelectOrder,
-            provide_Sites: resultSelectProvide_Sites,
-        })
+        let editSupplierData = ''
+        if (supplierPassword.value === '') {
+            console.log(111);
+            editSupplierData = {
+                supplier_ID: stateEdit.supplier_ID,
+                supplier_Name: stateEdit.supplier_Name,
+                address: stateEdit.address,
+                telphone: stateEdit.telphone,
+                email: stateEdit.email,
+                mealType: resultSelect,
+                mealOrder: NewResultSelectOrder,
+                provide_Sites: resultSelectProvide_Sites,
+            }
+        } else {
+            console.log(222);
+            editSupplierData = {
+                supplier_ID: stateEdit.supplier_ID,
+                supplier_Name: stateEdit.supplier_Name,
+                address: stateEdit.address,
+                telphone: stateEdit.telphone,
+                email: stateEdit.email,
+                mealType: resultSelect,
+                mealOrder: NewResultSelectOrder,
+                provide_Sites: resultSelectProvide_Sites,
+                password: supplierPassword.value
+            }
+        }
+        let editSupplier = await $editSupplier(editSupplierData)
         if (editSupplier) {
             swalEditSuccess()
             store.isChange.click()
@@ -233,6 +252,11 @@ watchEffect(() => {
         console.log(err);
     }
 })
+const supplierPassword = ref('')
+const isPassword = ref(false)
+const handlePassword = () => {
+    isPassword.value = true
+}
 onMounted(() => {
 
 })
@@ -297,9 +321,16 @@ onMounted(() => {
                         :value="item.value" :disabled="item.disabled" />
                 </el-select>
             </div>
-            <div class="d-flex justify-content-start">
-                <button type="button" class="btn btn-primary leftovers-confirm" @click="handleEdit">
+            <div class="mb-4" v-if="isPassword">
+                <label class="form-label" for="block-form1-site_ID">修改供應商密碼</label>
+                <input type="text" class="form-control" v-model="supplierPassword">
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-primary me-4" @click="handleEdit">
                     確認
+                </button>
+                <button type="button" class="btn btn-primary" @click="handlePassword">
+                    修改供應商密碼
                 </button>
             </div>
         </div>

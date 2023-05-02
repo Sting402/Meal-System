@@ -10,6 +10,7 @@ export const usePersonaleStore = defineStore("personal", {
             visitorsData: reactive({}),
             secondEditData: '',
             visitorsEditData: reactive({}),
+            thirdData: reactive({}),
             isDefault: ref(false),//默認餐按鈕修改用
             isSecond: ref(false),
             isVisitors: ref(false),

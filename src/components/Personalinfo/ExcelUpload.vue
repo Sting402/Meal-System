@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, onMounted, watchEffect } from 'vue'//員工資料維護
 import * as xlsx from "xlsx";
+import { Delete, Edit, Download, Files, Upload } from '@element-plus/icons-vue'
 import { saveAs } from 'file-saver';//匯出excel用
 import { ElLoading } from 'element-plus'//Loading加載
 import Swal from "sweetalert2";
@@ -169,14 +170,24 @@ onMounted(async () => {
     <div class="content">
         <div class="row">
             <div class="d-flex justify-content-end">
-                <el-upload class="upLoad-select" action accept=".xlsx,.xls" :auto-upload="false" :show-file-list="false"
+                <el-button type="primary" class="me-2" data-bs-toggle="tooltip" data-bs-placement="right" color="#626aef"
+                    title="right Tooltip" @click="getEmployeesInfo">匯出Excel範例
+                    <el-icon class="el-icon--right">
+                        <Download />
+                    </el-icon>
+                </el-button>
+                <el-upload class="me-2" action accept=".xlsx,.xls" :auto-upload="false" :show-file-list="false"
                     :on-change="handle">
-                    <el-button type="primary" slot="trigger">選取 Excel 文件</el-button>
+                    <el-button type="primary" slot="trigger" color="#626aef">選取Excel文件
+                        <el-icon class="el-icon--right">
+                            <Files />
+                        </el-icon>
+                    </el-button>
                 </el-upload>
-                <el-button type="success" @click="submit">匯入Excel 文件</el-button>
-                <el-button type="danger" class="btn1" data-bs-toggle="tooltip" data-bs-placement="right"
-                    title="right Tooltip" @click="getEmployeesInfo">
-                    匯出EXCEL
+                <el-button type="success" @click="submit">匯入Excel文件
+                    <el-icon class="el-icon--right">
+                        <Upload />
+                    </el-icon>
                 </el-button>
             </div>
         </div>

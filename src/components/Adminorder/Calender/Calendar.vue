@@ -7,17 +7,18 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import zhTwLocale from '@fullcalendar/core/locales/zh-tw'
-import Popin from './Popin.vue'
 import Swal from "sweetalert2";
+import Popin from './Popin.vue'
 import DefaultPop from "./DefaultPop.vue"
 import SecondPop from './SecondPop.vue'
 import VisitorsPop from "./VisitorsPop.vue";
+import ThirdPop from './ThirdPop.vue'
 import { $thatDay } from '../../../api/personal/getThatday'
 import { storeToRefs } from "pinia";
-import { usePersonaleStore } from '../../../stores/personal/personal';
+import { useAdminOrderStore } from '../../../stores/adminorder/select';
 import { $cancelDefault } from '../../../api/personal/cancelDefault'
 import { $addVisitors } from '../../../api/personal/addVisitors'
-const store = usePersonaleStore()
+const store = useAdminOrderStore();
 store.default_MealType = storeToRefs(store)
 // Helper variables
 const fullCalendar = ref(null);
@@ -26,6 +27,7 @@ const isChangeDefault = ref('')
 const isReorderDefault = ref('')
 const isSecondAdd = ref('')
 const isVisitorsAdd = ref('')
+const isThirdAdd = ref('')
 //
 let toast = Swal.mixin({
     buttonsStyling: false,
@@ -94,9 +96,10 @@ function handleExternalDrop(info) {
 const isDefault = ref('')
 const isSecond = ref('')
 const isVisitors = ref('')
+const isThird = ref('')
 async function handleEventClick(clickInfo) {
     //console.log(clickInfo.event)
-    // console.log(clickInfo)
+    //console.log(clickInfo)
     //console.log(clickInfo.event.extendedProps);
     //console.log(clickInfo.event.extendedProps.worker_ID);
     //console.log(clickInfo.event.extendedProps.selectedDay);
@@ -125,6 +128,17 @@ async function handleEventClick(clickInfo) {
             isVisitors.value = store.isVisitors
             isVisitors.value.click()
             break;
+        case 3:
+            store.thirdData = clickInfo.event.extendedProps
+            console.log(store.thirdData);
+            // store.isVisitorsEdit.click()
+            store.isThirdEdit.click()
+            console.log(store.isThirdEdit);
+            // isVisitors.value = store.isVisitors
+            isThird.value = store.isThird
+            // isVisitors.value.click()
+            isThird.value.click()
+            break;
     }
 }
 const today = new Date();
@@ -133,7 +147,14 @@ const end = new Date(today.getFullYear(), today.getMonth(), 25);
 //取得全部餐點
 const getWorkday = async () => {
     try {
-        let loginInfo = await JSON.parse(localStorage.getItem('loginInfo'))
+        //console.log(y);
+        // let res = await $workDay({ year: `${y}` })
+        // let workday = res
+        //console.log(res);
+        let loginInfo = store.loginInfo[0]
+        calendarOptions.events = []//初始化calendar
+        console.log(loginInfo);
+        //console.log(loginInfo);
         let default_MealOrder = loginInfo.default_MealOrder
         let data = []
         let dataSecond = []
@@ -158,11 +179,11 @@ const getWorkday = async () => {
         //console.log(filteredDays);//默認餐取消天數
         const filterDefaultDays = Days.filter((item) => item.meal_Sort === 1)
         //console.log(filterDefaultDays);//默認餐天數
-        const filerSecondDays = Days.filter((item) => item.meal_Sort === 2)
+        const filerSecondDays = Days.filter((item) => item.meal_Sort === 2)//新增第二餐的天數
         const filerVisitors = Days.filter((item) => item.meal_Sort === 9)
         const filerThirdDays = Days.filter((item) => item.meal_Sort === 3)//新增第三餐的天數
-        //console.log(filerSecondDays);//新增第二餐的天數
-        console.log(filerThirdDays);//管理者代訂第三餐的天數
+        // console.log(filerSecondDays);
+        console.log(filerThirdDays);
         filterDefaultDays.forEach((item, key) => {//目前今天9點之前的時間顏色還不要變
             //console.log(item);
             //console.log(item.site_ID);
@@ -403,7 +424,7 @@ const handleChange = async () => {
     //console.log(arr[0].default_MealOrder);
     //console.log(arr[0].start);
     try {
-        let loginInfo = await JSON.parse(localStorage.getItem('loginInfo'))
+        let loginInfo = store.loginInfo[0]
         const newStr = arr[0].default_MealOrder.substring(0, 1)
         //console.log(newStr);//查詢哪邊錯
         let res = await $cancelDefault({
@@ -442,7 +463,7 @@ const ReorderChange = async () => {
         }
     });
     try {
-        let loginInfo = await JSON.parse(localStorage.getItem('loginInfo'))
+        let loginInfo = store.loginInfo[0]
         const newStr = arr[0].default_MealOrder.substring(0, 1)
         console.log(newStr);
         console.log(store.defaultsite_ID);//先預備 LJ
@@ -502,13 +523,18 @@ const VisitorsAdd = async () => {
     calendarOptions.events = []
     getWorkday()
 }
+//管理者代訂第三餐
+const ThirdAdd = async () => {
+    calendarOptions.events = []
+    getWorkday()
+}
 //獲取下一個月或上一個月
 const gePrevORNext = async (year, month) => {
     try {
         calendarOptions.events = []
         console.log(year);
         console.log(month);
-        let loginInfo = await JSON.parse(localStorage.getItem('loginInfo'))
+        let loginInfo = store.loginInfo[0]
         let default_MealOrder = loginInfo.default_MealOrder
         let data = []
         let dataSecond = []
@@ -536,9 +562,8 @@ const gePrevORNext = async (year, month) => {
         const filerVisitors = Days.filter((item) => item.meal_Sort === 9)
         const filerThirdDays = Days.filter((item) => item.meal_Sort === 3)//新增第三餐的天數
         //console.log(filerSecondDays);//新增第二餐的天數
-        console.log(filerThirdDays);
         filterDefaultDays.forEach((item, key) => {//目前今天9點之前的時間顏色還不要變
-            //console.log(item);
+            console.log(item);
             //console.log(item.site_ID);
             item.order_Date = item.order_Date.substring(0, 10)
             let color = ''
@@ -714,7 +739,6 @@ const gePrevORNext = async (year, month) => {
             } else {
                 title = item.site_ID + item.meal_Order + '餐' + `(${item.meal_Type}食)`;
             }
-            console.log(111);
             dataThird.push({
                 title: title,
                 allDay: true,
@@ -755,6 +779,7 @@ onMounted(() => {
     store.isReorderDefault = isReorderDefault.value
     store.isVisitorsAdd = isVisitorsAdd.value
     store.isSecondAdd = isSecondAdd.value
+    store.isThirdAdd = isThirdAdd.value
     //console.log(fullCalendar.value);
     // 選擇左右切換月份的按鈕
     const prevButton = document.querySelector('.fc-prev-button')
@@ -788,7 +813,13 @@ onMounted(() => {
         gePrevORNext(nextYear, nextMonth)
     })
 });
-
+const isGetWorkday = ref('')
+const handleGetWorkday = () => {
+    getWorkday()
+}
+onMounted(() => {
+    store.isGetWorkday = isGetWorkday.value
+})
 </script>
 <template>
     <!-- Page Content -->
@@ -796,15 +827,16 @@ onMounted(() => {
         <DefaultPop></DefaultPop>
         <SecondPop></SecondPop>
         <VisitorsPop></VisitorsPop>
+        <ThirdPop></ThirdPop>
     </div>
     <div class="content">
         <!-- Calendar -->
         <BaseBlock>
             <div class="row items-push">
                 <div class="col-md-12 col-lg-12 col-xl-12">
+                    <Popin></Popin>
                     <!-- Calendar Container -->
                     <!-- <button type="button" class="btn btn-primary push">新增餐點</button> -->
-                    <Popin></Popin>
                     <FullCalendar ref="fullCalendar" :options="calendarOptions">
                     </FullCalendar>
                 </div>
@@ -813,6 +845,7 @@ onMounted(() => {
             <button @click="ReorderChange" ref="isReorderDefault" v-show="false">個人恢復訂餐</button>
             <button @click="SecondAdd" ref="isSecondAdd" v-show="false">訪客代訂</button>
             <button @click="VisitorsAdd" ref="isVisitorsAdd" v-show="false">訪客代訂</button>
+            <button @click="ThirdAdd" ref="isThirdAdd" v-show="false">第三餐</button>
         </BaseBlock>
     </div>
     <div class="col-md-6">
@@ -823,6 +856,7 @@ onMounted(() => {
             <i class="fa fa-times-circle text-danger me-1"></i> Launch Dialog
         </button>
     </div>
+    <button type="button" ref="isGetWorkday" @click="handleGetWorkday" v-show="false">重啟</button>
 </template>
 <style lang="scss">
 // FullCalendar custom overrides

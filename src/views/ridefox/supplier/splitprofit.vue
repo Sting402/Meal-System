@@ -66,7 +66,7 @@ const openExcelFile = () => {
     <div class="content">
         <BaseBlock title="廠商公司分帳報表" :rounded="true" header-class="bg-muted" themed>
             <div class="row items-push text-center">
-                <div class="col-sm-6 col-xl-2 col-md-2">
+                <div class="col-sm-6 col-xl-4 col-md-4">
                     <label class="form-label" for="example-select">日期</label>
                     <FlatPickr id="example-flatpickr-default" class="form-control" placeholder="請選擇日期"
                         v-model="flatPickrState.dateDefault" />
@@ -75,33 +75,33 @@ const openExcelFile = () => {
                         Bottom
                     </button> -->
                 </div>
-                <div class="col-sm-6 col-xl-2 col-md-2">
+                <div class="col-sm-6 col-xl-4 col-md-4">
                     <label class="form-label" for="example-select">請款廠商</label>
                     <Supplier></Supplier>
                 </div>
-                <div class="col-sm-6 col-xl-2 col-md-2">
+                <div class="col-sm-6 col-xl-4 col-md-4">
                     <label class="form-label" for="example-select">部門(請款)</label>
                     <Dep></Dep>
                 </div>
-                <div class="col-sm-6 col-xl-2 col-md-2">
+                <div class="col-sm-6 col-xl-4 col-md-4">
                     <label class="form-label" for="example-select">公司別</label>
                     <select class="form-select" id="example-select" name="example-select" placeholder="公司別(請款)">
                         <option selected>公司別(請款)</option>
                         <option value="1">Suspension</option>
                     </select>
                 </div>
-                <div class="col-sm-6 col-xl-2 col-md-2">
+                <div class="col-sm-6 col-xl-4 col-md-4">
                     <label class="form-label" for="example-select">公司別</label>
                     <select class="form-select" id="example-select" name="example-select" placeholder="公司別(請款)">
                         <option selected>公司別(請款)</option>
                         <option value="1">Component</option>
                     </select>
                 </div>
-                <div class="col-sm-6 col-xl-2 col-md-2">
+                <div class="col-sm-6 col-xl-4 col-md-4">
                     <label class="form-label" for="example-select">下載</label>
-                    <button type="button" class="btn 
-btn-alt-secondary w-100" data-bs-toggle="tooltip" data-bs-placement="left" title="Left Tooltip" @click="openExcelFile">
-                        匯出EXCEL
+                    <button type="button" class="btn btn-alt-secondary w-100" data-bs-toggle="tooltip"
+                        data-bs-placement="left" title="Left Tooltip" @click="hanldeConfirm">
+                        匯出資料
                     </button>
                 </div>
             </div>
@@ -113,82 +113,3 @@ btn-alt-secondary w-100" data-bs-toggle="tooltip" data-bs-placement="left" title
 @import "flatpickr/dist/flatpickr.css";
 </style>
 
-<!-- <script setup>
-import { reactive } from "vue";
-
-
-</script>
-
-<template>
-    <BasePageHeading title="廠商公司分帳報表" subtitle="分帳報表">
-        <template #extra>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-alt">
-                    <li class="breadcrumb-item">
-                        <a class="link-fx" href="javascript:void(0)">查詢報表</a>
-                    </li>
-                    <li class="breadcrumb-item" aria-current="page">廠商公司分帳報表</li>
-                </ol>
-            </nav>
-        </template>
-    </BasePageHeading> -->
-
-<!-- 
-    <div class="content">
-        <BaseBlock title="請款區間" id="supplier-baseblock">
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-vcenter">
-                    <thead>
-                        <tr>
-                            <th>
-                                <MultipleSelectPro></MultipleSelectPro>
-                            </th>
-                            <th>
-                                <MultipleSelectDep></MultipleSelectDep>
-                            </th>
-                            <th>
-                                <select class="form-select" id="example-select" name="example-select"
-                                    placeholder="公司別(請款)..">
-                                    <option selected>公司別(請款)..</option>
-                                    <option value="1">Suspension</option>
-                                </select>
-                            </th>
-                            <th>
-                                <select class="form-select" id="example-select" name="example-select"
-                                    placeholder="公司別(請款)..">
-                                    <option selected>公司別(請款)..</option>
-                                    <option value="1">Component</option>
-                                </select>
-                            </th>
-                            <th>總計 結果</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>好食客</td>
-                            <td>810</td>
-                            <td>7190</td>
-                            <td></td>
-                            <td>7190</td>
-
-                        </tr>
-                        <tr>
-                            <td>好食客</td>
-                            <td>821</td>
-                            <td>12670</td>
-                            <td></td>
-                            <td>12670</td>
-                        </tr>
-                        <tr>
-                            <td>好食客</td>
-                            <td>Component</td>
-                            <td></td>
-                            <td>19860</td>
-                            <td>19860</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </BaseBlock>
-    </div>
-</template> -->

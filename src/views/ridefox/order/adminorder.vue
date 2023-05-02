@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, computed, onMounted, watch, ref, watchEffect } from "vue"
-import Calendar from "../../../components/Adminorder/Calendar.vue"
+import Calendar from "../../../components/Adminorder/Calender/Calendar.vue"
 import { ElLoading } from 'element-plus'//Loading加載
 import { readFile, character, delay } from '../../../utils/utils'
 import {
@@ -121,7 +121,6 @@ function onSort(event, i) {
 }
 const newStore = reactive([])
 const getEmployeesInfo = async () => {
-
     try {
         let res = await $personalInfo({ "active": true })//這一支api是用條件查詢
         let data = res
@@ -142,15 +141,22 @@ const handleChange = () => {
     console.log("handleChange");
     getEmployeesInfo()
 }
+//處理點選不同workid
 const handleRadio = (index) => {
+    isChecked.value = false
     console.log('Selected Item: ', index);//index是員工資訊
-    store.data[0] = index
-    console.log(store.data[0]);
+    store.loginInfo[0] = index
+    console.log(store.loginInfo[0]);
     isChecked.value = true
+    console.log(store.isGetWorkday);
+    // store.isGetWorkday.click()
+    if (store.isGetWorkday) {
+        console.log(111);
+        store.isGetWorkday.click()
+    }
 }
 getEmployeesInfo()
 onMounted(() => {
-    //store.isSelect = isChange.value
     document.querySelectorAll("#datasetLength label").forEach((el) => {
         el.remove();
     });
@@ -231,7 +237,7 @@ onMounted(() => {
                 </div>
             </Dataset>
             <button @click="handleChange" ref="isChange" v-show="false">改變</button>
-            <Calendar></Calendar>
+            <Calendar v-if="isChecked"></Calendar>
         </BaseBlock>
     </div>
 </template>

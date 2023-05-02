@@ -126,6 +126,7 @@ onMounted(() => {
                 <table class="table table-bordered table-striped table-vcenter">
                     <thead>
                         <tr>
+                            <th class="text-center" style="width: 10%">供應商ID</th>
                             <th class="text-center" style="width: 10%">供應商名稱</th>
                             <th class="text-center" style="width: 10%">供應商地址</th>
                             <th class="text-center" style="width: 10%">供應商電話</th>
@@ -138,6 +139,9 @@ onMounted(() => {
                     </thead>
                     <tbody>
                         <tr v-for="(list, item) in infoList.values">
+                            <td class="text-center">
+                                {{ list.supplier_ID }}
+                            </td>
                             <td class="text-center">
                                 {{ list.supplier_Name }}
                             </td>
@@ -159,12 +163,12 @@ onMounted(() => {
                             </td>
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-alt-secondary" data-bs-toggle="offcanvas"
+                                    <button type="button" class="btn btn-sm btn btn-primary me-1" data-bs-toggle="offcanvas"
                                         data-bs-target="#offcanvasRight2" aria-controls="offcanvasRight2"
                                         @click="handleEdit(item)">
                                         <i class="fa fa-fw fa-pencil-alt"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-alt-secondary" @click="handleEditDel(item)">
+                                    <button type="button" class="btn btn-sm btn-danger" @click="handleEditDel(item)">
                                         <i class="fa fa-fw fa-times"></i>
                                     </button>
                                 </div>

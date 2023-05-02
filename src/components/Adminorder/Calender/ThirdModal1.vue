@@ -1,0 +1,366 @@
+<script setup>
+import { ref, reactive, onMounted, computed, watchEffect } from "vue";
+import FlatPickr from "vue-flatpickr-component"
+import Swal from "sweetalert2";
+import { $selectSite } from '../../../api/defaultmeal/selectSite'
+import { $addThird } from '../../../api/personal/addThird'
+import { $cancelSecond } from '../../../api/personal/cancelSecond'
+import { useAdminOrderStore } from '../../../stores/adminorder/select';
+import { set } from "lodash";
+const store = useAdminOrderStore()
+const flatPickrState = reactive({
+    // Initial values
+    dateDefault: null,
+    dateCustom: null,
+    dateFriendly: null,
+    dateRange: null,
+    timeStandalone: null,
+    timeStandalone24: null,
+    timeDateTime: null,
+    timeDateTime24: null,
+    inlineDefault: null,
+    inlineTime: null,
+
+    // Configuration, get more form https://chmln.github.io/flatpickr/options/
+    configCustom: { dateFormat: "d-m-Y" },
+    configFriendly: { dateFormat: "F j, Y" },
+    configRange: { mode: "single", minDate: "today", clickOpens: false, },
+    configTimeStandalone: {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+    },
+    configTimeStandalone24: {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true,
+    },
+    configDateTime: { enableTime: true },
+    configDateTime24: { enableTime: true, time_24hr: true },
+    configInlineDefault: { inline: true },
+    configInlineTime: { inline: true, enableTime: true },
+});
+
+//
+let toast = Swal.mixin({
+    buttonsStyling: false,
+    target: "#page-container",
+    customClass: {
+        confirmButton: "btn btn-success m-1",
+        cancelButton: "btn btn-danger m-1",
+        input: "form-control",
+    },
+});
+function swalErrorEdit() {
+    toast.fire("編輯失敗", "請重新編輯", "error");
+}
+function swalEditSuccess() {
+    toast.fire("編輯成功", "編輯餐點成功", "success");
+}
+function swalEditDeleteSuccess() {
+    toast.fire("刪除成功", "刪除餐點成功", "success");
+}
+//
+const isShowButton = ref(true)
+const isThirdEdit = ref('')
+const state = reactive({
+    site_ID: '',
+    Third_MealOrder: '',
+    default_MealType: '',
+    select: [],
+    rest_ID: [],
+    order_Desc: '', // //事由
+    shift: ''
+})
+const stateThird_MealOrder = ([
+    { value: '午餐' },
+    { value: '晚餐' },
+    { value: '宵夜' },
+    { value: '早餐' },
+])
+const selectedValue = ref('');
+//這邊還要修改
+const initSiteChange = async () => {
+    try {
+        let loginInfo = store.loginInfo[0]
+        console.log(loginInfo)
+        let meal_Order = ''
+        switch (loginInfo.default_MealOrder) {
+            case '午':
+                meal_Order = '宵夜'
+                break;
+            case '晚':
+                meal_Order = '早餐'
+                break;
+            case '宵':
+                meal_Order = '午餐'
+                break;
+            case '早':
+                meal_Order = '晚餐'
+                break;
+        }
+        let res = await $selectSite({
+            dept_ID: loginInfo.dept_ID,
+            site_ID: loginInfo.site_ID,
+            meal_Order: meal_Order
+        })
+        let data = res
+        console.log(data);
+        state.rest_ID = data.payload
+        if (state.rest_ID.length === 1) {
+            state.default_MealType = ['葷食', '素食'] //新增第二餐應該沒有輕食
+        }
+        switch (loginInfo.default_MealType) {
+            case '葷':
+                meal_MealType = '葷食'
+                break;
+            case '素':
+                meal_MealType = '素食'
+                break;
+            case '輕':
+                meal_MealType = '輕食'
+                break;
+        }
+        selectedValue.value = meal_MealType
+        console.log(loginInfo.site_ID);
+        state.site_ID = loginInfo.site_ID
+        state.order_Desc = loginInfo.order_Desc
+        console.log(state.order_Desc);
+    } catch (err) {
+        console.log(err);
+    }
+}
+//初始化餐點
+const initThird_MealOrder = async () => {
+    let loginInfo = store.loginInfo[0]
+    console.log(loginInfo.order_Desc);
+    let meal_Order = ''
+    switch (loginInfo.default_MealOrder) {
+        case '午':
+            meal_Order = '宵夜'
+            break;
+        case '晚':
+            meal_Order = '早餐'
+            break;
+        case '宵':
+            meal_Order = '午餐'
+            break;
+        case '早':
+            meal_Order = '晚餐'
+            break;
+    }
+    state.Third_MealOrder = meal_Order
+}
+const handleChange = () => {
+    console.log(store.thirdData);
+    selectedValue.value = store.thirdData.default_MealType
+    let selectedDay = store.thirdData.selectedDay
+    flatPickrState.dateRange = selectedDay.substring(0, 10)
+    isShowButton.value = store.thirdData.enable
+    state.site_ID = store.thirdData.site_ID
+    state.order_Desc = store.thirdData.order_Desc
+}
+
+const handleEdit = async () => {
+    //console.log(flatPickrState.dateRange);
+    let loginInfo = store.loginInfo[0]
+    let adminInfo = await JSON.parse(localStorage.getItem('loginInfo'))
+    try {
+        //console.log(state.Third_MealOrder);
+        let meal_Order = ''
+        switch (state.Third_MealOrder) {
+            case '午餐':
+                meal_Order = '午'
+                break;
+            case '晚餐':
+                meal_Order = '晚'
+                break;
+            case '宵夜':
+                meal_Order = '宵'
+                break;
+            case '早餐':
+                meal_Order = '早'
+                break;
+        }
+        //console.log(meal_Order);
+        let Meal_Type = ''
+        switch (selectedValue.value) {
+            case '葷食':
+                Meal_Type = '葷'
+                break;
+            case '素食':
+                Meal_Type = '素'
+                break;
+        }
+        console.log(state.site_ID);
+        // let res = await $addThird({
+        //     worker_ID: loginInfo.worker_ID,
+        //     dept_ID: loginInfo.dept_ID,
+        //     site_ID: state.site_ID,
+        //     meal_OrderCust: 0,  //0：自己訂; 1：代客戶訂；
+        //     meal_Order: meal_Order,
+        //     Meal_Type: Meal_Type,
+        //     meal_Number: 1,
+        //     order_Date: flatPickrState.dateRange,
+        //     Active: true,
+        // })
+        let res = await $addThird({
+            worker_ID: loginInfo.worker_ID,
+            dept_ID: loginInfo.dept_ID,
+            site_ID: state.site_ID,
+            order_Date: flatPickrState.dateRange,
+            "meal_OrderCust": 2,         //0：管理者代訂員工自己訂餐點; 1：管理者代訂員工的代客戶訂； 2：管理者代訂員工的第三餐；
+            meal_Order: meal_Order,
+            Meal_Type: Meal_Type,
+            "meal_Number": 1,
+            "Active": true,
+            "order_Desc": state.order_Desc,      //代客戶訂必填
+            "op": adminInfo.worker_ID    //管理者
+        })
+        //console.log(res);
+        let data = res.success
+        if (data) {
+            swalEditSuccess()
+            store.isSecondAdd.click()
+            handleClose()//彈窗關閉
+        } else {
+            swalErrorEdit()
+        }
+    } catch (err) {
+        console.log(err);
+    }
+
+}
+const handleDelete = async () => {
+    let loginInfo = store.loginInfo[0]
+    let adminInfo = await JSON.parse(localStorage.getItem('loginInfo'))
+    let meal_Order = ''
+    switch (state.Third_MealOrder) {
+        case '午餐':
+            meal_Order = '午'
+            break;
+        case '晚餐':
+            meal_Order = '晚'
+            break;
+        case '宵夜':
+            meal_Order = '宵'
+            break;
+        case '早餐':
+            meal_Order = '早'
+            break;
+    }
+    let Meal_Type = ''
+    switch (selectedValue.value) {
+        case '葷食':
+            Meal_Type = '葷'
+            break;
+        case '素食':
+            Meal_Type = '素'
+            break;
+    }
+    try {
+        let res = await $cancelSecond({
+            worker_ID: loginInfo.worker_ID,
+            order_Date: flatPickrState.dateRange,
+            meal_Order: meal_Order,
+            meal_OrderCust: 2,         //0：自己訂; 1：代客戶訂； 2:管理者代訂第三餐
+            active: false,            //false:取消; true:恢復
+            "op": adminInfo.worker_ID
+        }
+        )
+        //console.log(res);
+        let data = res.success
+        if (data) {
+            swalEditDeleteSuccess()
+            store.isVisitorsAdd.click()
+            handleClose()//彈窗關閉
+        } else {
+            swalErrorEdit()
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+//彈窗關閉
+const handleClose = () => {
+    store.isThirdPopEdit.click()
+}
+initSiteChange()
+initThird_MealOrder()
+onMounted(() => {
+    store.isThirdEdit = isThirdEdit.value
+})
+</script>
+<template>
+    <div class="row justify-content-center py-sm-3 py-md-5">
+        <div class="col-sm-10 col-md-8">
+            <div class="mb-4">
+                <label class="form-label" for="block-form1-password">餐別</label>
+                <select class="form-select" id="example-select" name="example-select" v-model="state.Third_MealOrder"
+                    disabled="true">
+                    <option v-for="item in  stateThird_MealOrder " :value="item.value" :key="item">{{ item.value }}
+                    </option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="form-label" for="block-form1-username">選擇廠別</label>
+                <div id="app">
+                    <select id="default-select" class="form-select" v-model="state.site_ID" :disabled="!isShowButton">
+                        <option value="CY">CY</option>
+                        <option value="JK8">JK8</option>
+                        <option value="JKS">JKS</option>
+                        <option value="LJ">LJ</option>
+                        <option value="TC">TC</option>
+                        <option value="TRI">TRI</option>
+                        <option value="WQ">WQ</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label" for="block-form1-password">選擇類型</label>
+                <div id="app">
+                    <select class="form-select" id="default-select" v-model="selectedValue" @change="handleMealType"
+                        :disabled="!isShowButton">
+                        <option :value="list" v-for="(list, item) in state.default_MealType" :key="item">
+                            {{ list }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label" for="example-flatpickr-default">選擇日期</label>
+                <FlatPickr id="example-flatpickr-range" class="form-control" placeholder="日期已過訂單無法修改"
+                    v-model="flatPickrState.dateRange" :config="flatPickrState.configRange" />
+            </div>
+            <div class="mb-4">
+                <label class="form-label" for="block-form1-password">訂餐事由<span class="text-danger">*</span></label>
+                <textarea class="form-control" id="example-textarea-input" name="example-textarea-input" rows="2"
+                    placeholder="事由" style="resize:none;" v-model="state.order_Desc"></textarea>
+            </div>
+            <div class="d-flex justify-content-start" v-if="isShowButton">
+                <button type="button" class="btn btn-primary ms-1" @click="handleEdit">
+                    編輯訂餐
+                </button>
+                <button type="button" class="btn  btn-danger ms-4" @click="handleDelete">
+                    刪除訂餐
+                </button>
+            </div>
+            <button type="button" ref="isThirdEdit" @click="handleChange" v-show="false"></button>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <button type="button" @click="handleClose" v-show="false">關閉</button>
+        <button type="button" class="btn btn-alt-secondary push" @click="swalEditSuccess" v-show="false">
+            <i class="fa fa-check-circle text-success me-1"></i> Launch Dialog
+        </button>
+        <button type="button" class="btn btn-alt-secondary push" @click="swalErrorEdit" v-show="false">
+            <i class="fa fa-times-circle text-danger me-1"></i> Launch Dialog
+        </button>
+    </div>
+</template>
+<style lang="scss">
+@import "flatpickr/dist/flatpickr.css";
+@import "@/assets/scss/vendor/flatpickr";
+@import "sweetalert2/dist/sweetalert2.min.css";
+</style>

@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, onMounted, watchEffect } from 'vue'//年度行事曆
 import * as xlsx from "xlsx";
+import { Delete, Edit, Download, Files, Upload } from '@element-plus/icons-vue'
 import { saveAs } from 'file-saver';//匯出excel用
 import { ElLoading } from 'element-plus'//Loading加載
 import Swal from "sweetalert2";
@@ -21,28 +22,43 @@ let toast = Swal.mixin({
 let arr = []
 const handle = async (ev) => {
     //日期格式不對的方式 直接轉換
+    arr = []
     console.log(ev);
     let file = ev.raw
     if (!file) return
     let data = await readFile(file)
     let workbook = xlsx.read(data, { type: 'binary' })
     let worksheet = workbook.Sheets[workbook.SheetNames[0]]
+    console.log(worksheet);
     data = xlsx.utils.sheet_to_json(worksheet)
     console.log(data);
+    let newList = []
     data.forEach(item => {
-        console.log(item.不供應預設餐日期);
+        //console.log(item.不供應預設餐日期);
+        //console.log(item.供應預設餐日期);
         if (item.不供應預設餐日期) {
             let dateValue = new Date((item.不供應預設餐日期 - (25567 + 2)) * 86400 * 1000)
             item.不供應預設餐日期 = formatDate(dateValue, 'yyyy-MM-dd')
+            // let dateValue1 = new Date((item.供應預設餐日期 - (25567 + 2)) * 86400 * 1000)
+            // item.供應預設餐日期 = formatDate(dateValue1, 'yyyy-MM-dd')
+        }
+        if (item.供應預設餐日期) {
+            console.log(222);
+            let dateValue1 = new Date((item.供應預設餐日期 - (25567 + 2)) * 86400 * 1000)
+            item.供應預設餐日期 = formatDate(dateValue1, 'yyyy-MM-dd')
+            newList.push({
+                "供應預設餐日期": item.供應預設餐日期
+            })
+            delete item.供應預設餐日期;//刪掉item.供應預設餐日期
         }
         item = Object.fromEntries(
             Object.entries(item).map(([key, value]) => [key, value.toString()])
         );
         arr.push(item)
-        console.log(arr);
     })
-    // let arrStr = JSON.stringify(arr);
-    // console.log(arrStr);
+    arr.push(...newList);
+    console.log(newList);
+    console.log(arr);
     if (arr.length > 0) {
         toast.fire("提交成功", "接著點選匯入Excel匯入!", "info");
 
@@ -99,6 +115,7 @@ const submit = async () => {
         body.push(arr[n])
         console.log(body);
         let isupLoad = await $upLoadInfo(body)
+        console.log(isupLoad);
         if (isupLoad) {
             n++
             console.log(n);
@@ -133,46 +150,39 @@ onMounted(() => {
     <div class="content">
         <div class="row">
             <div class="d-flex justify-content-end">
-                <el-upload class="upLoad-select" action accept=".xlsx,.xls" :auto-upload="false" :show-file-list="false"
-                    :on-change="handle">
-                    <el-button type="primary" slot="trigger">選取 Excel 文件</el-button>
-                </el-upload>
-                <el-button type="success" @click="submit">匯入Excel 文件</el-button>
-                <el-button type="danger" data-bs-toggle="tooltip" data-bs-placement="right" title="right Tooltip"
-                    @click="getEmployeesInfo">
-                    匯出EXCEL
+                <el-button type="primary" class="me-2" data-bs-toggle="tooltip" data-bs-placement="right" color="#626aef"
+                    title="right Tooltip" @click="getEmployeesInfo">匯出Excel範例
+                    <el-icon class="el-icon--right">
+                        <Download />
+                    </el-icon>
                 </el-button>
+                <el-upload class="me-2" action accept=".xlsx,.xls" :auto-upload="false" :show-file-list="false"
+                    :on-change="handle">
+                    <el-button type="primary" slot="trigger" color="#626aef">選取Excel文件
+                        <el-icon class="el-icon--right">
+                            <Files />
+                        </el-icon>
+                    </el-button>
+                </el-upload>
+                <el-button type="success" @click="submit">匯入Excel文件
+                    <el-icon class="el-icon--right">
+                        <Upload />
+                    </el-icon>
+                </el-button>
+                <!-- <el-button type="danger" data-bs-toggle="tooltip" data-bs-placement="right" title="right Tooltip"
+                                                                                                                                                                        @click="getEmployeesInfo">
+                                                                                                                                                                        匯出EXCEL
+                                                                                                                                                                    </el-button> -->
+                <!-- <el-upload class="upLoad-select" action accept=".xlsx,.xls" :auto-upload="false" :show-file-list="false"
+                                                                                                                                                                :on-change="handle">
+                                                                                                                                                                <el-button type="primary" slot="trigger">選取 Excel 文件</el-button>
+                                                                                                                                                            </el-upload> -->
+                <!-- <el-button type="success" @click="submit">匯入Excel 文件</el-button> -->
             </div>
         </div>
     </div>
     <button type="button" class="btn btn-alt-secondary push" @click="swalInfo" v-show="false"></button>
 </template>
-<style lang="scss" scoped>
-.upLoad-select {
-    margin-right: 10px !important;
-}
-
-.buttonBox {
-    padding: 15px;
-    display: flex;
-    width: 35%;
-    justify-content: flex-start;
-
-    & .el-button {
-        margin-right: 20px !important;
-    }
-}
-
-.tableBox {
-    padding: 0 15px;
-
-    h3 {
-        font-size: 18px;
-        color: #f56c6c;
-        padding-bottom: 15px;
-    }
-}
-</style>
 <style lang="scss">
 // SweetAlert2
 @import "sweetalert2/dist/sweetalert2.min.css";

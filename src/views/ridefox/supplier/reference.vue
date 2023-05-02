@@ -330,87 +330,15 @@ onMounted(() => {
                     <Type></Type>
                 </div>
                 <div class="col-sm-6 col-xl-4 col-md-4">
-                    <label class="form-label" for="example-select">確認</label>
+                    <label class="form-label" for="example-select">下載</label>
                     <button type="button" class="btn btn-alt-secondary w-100" data-bs-toggle="tooltip"
                         data-bs-placement="left" title="Left Tooltip" @click="hanldeConfirm">
                         匯出資料
                     </button>
                 </div>
-                <!-- <div class="col-sm-6 col-xl-4 col-md-4">
-                                                                                                                                            <label class="form-label" for="example-select">確認輸出</label>
-                                                                                                                                            <button type="button" class="btn btn-primary w-100" data-bs-toggle="tooltip" data-bs-placement="left"
-                                                                                                                                                title="Left Tooltip" @click="handleConfirm">
-                                                                                                                                                確定
-                                                                                                                                            </button>
-                                                                                                                                        </div> -->
-                <div class="col-sm-6 col-xl-4 col-md-4">
-                    <label class="form-label" for="example-select">下載</label>
-                    <button type="button" class="btn  btn-alt-secondary w-100" data-bs-toggle="tooltip"
-                        data-bs-placement="left" title="Left Tooltip" @click="openExcelFile">
-                        匯出EXCEL
-                    </button>
-                </div>
             </div>
         </BaseBlock>
     </div>
-    <!-- <div class="content">
-                                                                                                                                    <BaseBlock title="資料" content-full>
-                                                                                                                                        <Dataset v-slot="{ ds }" :ds-data="newStore[0]" :ds-sortby="sortBy"
-                                                                                                                                            :ds-search-in="['dept_ID', 'dept_Name', 'dept_Desc']">
-                                                                                                                                            <div class="row" :data-page-count="ds.dsPagecount">
-
-                                                                                                                                                <div id="datasetLength" class="col-md-8 py-2">
-                                                                                                                                                    <DatasetShow />
-                                                                                                                                                </div>
-                                                                                                                                                <div class="col-md-4 py-2">
-                                                                                                                                                    <DatasetSearch ds-search-placeholder="搜尋" />
-                                                                                                                                                </div>
-                                                                                                                                            </div>
-                                                                                                                                            <hr />
-                                                                                                                                            <div class="row">
-                                                                                                                                                <div class="col-md-12">
-                                                                                                                                                    <div class="table-responsive">
-                                                                                                                                                        <table class="table table-striped mb-0">
-                                                                                                                                                            <thead>
-                                                                                                                                                                <tr>
-                                                                                                                                                                    <th v-for="(th, index) in     cols" :key="th.field" :class="['sort', th.sort]"
-                                                                                                                                                                        @click="onSort($event, index)" class="text-center">
-                                                                                                                                                                        {{ th.name }} <i class="gg-select float-end"></i>
-                                                                                                                                                                    </th>
-                                                                                                                                                                </tr>
-                                                                                                                                                            </thead>
-                                                                                                                                                            <DatasetItem tag="tbody" class="fs-sm">
-                                                                                                                                                                <template #default="{ row, rowIndex }">
-                                                                                                                                                                    <tr>
-                                                                                                                                                                        <th class="text-center" style="min-width: 150px">{{ row.dept_ID }}</th>
-                                                                                                                                                                        <td class="text-center" style="min-width: 150px">{{ row.dept_Name }}</td>
-                                                                                                                                                                        <td class="text-center" style="min-width: 150px">{{ row.dept_Desc }}</td>
-                                                                                                                                                                        <td class="text-center">
-                                                                                                                                                                            <div class="btn-group">
-                                                                                                                                                                                <button type="button" class="btn btn-sm btn-primary"
-                                                                                                                                                                                    style="margin-right: 4px;" @click="handleEdit(rowIndex)">
-                                                                                                                                                                                    <i class="fa fa-fw fa-pencil-alt"></i>
-                                                                                                                                                                                </button>
-                                                                                                                                                                                <button type="button" class="btn btn-sm btn-danger"
-                                                                                                                                                                                    @click="handleEditDel(rowIndex)">
-                                                                                                                                                                                    <i class="fa fa-fw fa-times"></i>
-                                                                                                                                                                                </button>
-                                                                                                                                                                            </div>
-                                                                                                                                                                        </td>
-                                                                                                                                                                    </tr>
-                                                                                                                                                                </template>
-                                                                                                                                                            </DatasetItem>
-                                                                                                                                                        </table>
-                                                                                                                                                    </div>
-                                                                                                                                                </div>
-                                                                                                                                            </div>
-                                                                                                                                            <div class="d-flex flex-md-row flex-column justify-content-between align-items-center">
-                                                                                                                                                <DatasetInfo class="py-3 fs-sm" />
-                                                                                                                                                <DatasetPager class="flex-wrap py-3 fs-sm" />
-                                                                                                                                            </div>
-                                                                                                                                        </Dataset>
-                                                                                                                                    </BaseBlock>
-                                                                                                                                </div> -->
 </template>
 <style lang="scss" scoped>
 .gg-select {

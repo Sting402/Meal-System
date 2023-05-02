@@ -1,13 +1,13 @@
 import { $get, $setToken, $post } from '../../utils/request'
-import { reactive, computed, ref } from "vue";
-export const $editSupplier = async (params) => {
+export const $suppliersOrderReport = async (params) => {
     try {
-        let data = await $post('/api/Suppliers/ModifySuppliers', params);
+        let data = await $post('/api/Report/SuppliersOrderReport', params);
         console.log(data);
-        if (data.success === false) {
+        if (data) {
+            return data
+        } else {
             return false
         }
-        return data;
     } catch (error) {
         console.log("catch");
         console.log("error");

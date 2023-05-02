@@ -115,15 +115,28 @@ const getNoworkDates = async () => {
         });
         //console.log(filteredNextMonthDates);
         const mergedDates = filteredDates.concat(filteredNextMonthDates);
-        //console.log(mergedDates);
+        console.log(mergedDates);
         // let today = getDateformat()
         let today = new Date(); // 
-        const twoWeeksLater = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14); // 獲取兩週後的日期
-        //console.log(twoWeeksLater);
-        //這還不確定 多測試幾天
-        const result = mergedDates.slice(mergedDates.indexOf(today.toISOString().slice(0, 10)), mergedDates.indexOf(twoWeeksLater.toISOString().slice(0, 10)) + 1);
-        //console.log(filteredDates); // ["2023-03-07", "2023-03-19"]
-        flatPickrState.configRange.enable = result
+        // 設置為今天的 0 時 0 分 0 秒
+        today.setHours(0, 0, 0, 0);
+        // 計算 2 個禮拜後的日期
+        let twoWeeksLater = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+        console.log(twoWeeksLater);
+        // 取得日期字串的格式化函式
+        function formatDate(date) {
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0');
+            let day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        // 篩選出包含在範圍內的日期
+        let datesInRange = dates.filter(date => {
+            let currentDate = new Date(date);
+            return currentDate >= today && currentDate <= twoWeeksLater;
+        }).map(date => formatDate(new Date(date)));
+        console.log(datesInRange);
+        flatPickrState.configRange.enable = datesInRange
         //console.log(flatPickrState.configRange.enable);
     } catch (err) {
         console.log(err);

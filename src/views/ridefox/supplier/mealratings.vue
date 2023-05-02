@@ -90,16 +90,11 @@ const openExcelFile = () => {
                     <label class="form-label" for="example-select">類型</label>
                     <Meal></Meal>
                 </div>
-                <!-- <div class="col-sm-6 col-xl-4 col-md-4">
-                                <label class="form-label" for="example-select">部門</label>
-                                <Dep></Dep>
-                            </div> -->
                 <div class="col-sm-6 col-xl-4 col-md-4">
                     <label class="form-label" for="example-select">下載</label>
-                    <button type="button" class="btn 
-            btn-alt-secondary w-100" data-bs-toggle="tooltip" data-bs-placement="left" title="Left Tooltip"
-                        @click="openExcelFile">
-                        匯出EXCEL
+                    <button type="button" class="btn btn-alt-secondary w-100" data-bs-toggle="tooltip"
+                        data-bs-placement="left" title="Left Tooltip" @click="hanldeConfirm">
+                        匯出資料
                     </button>
                 </div>
             </div>

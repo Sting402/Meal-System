@@ -2,9 +2,41 @@ import { defineStore } from "pinia";
 import { reactive, ref } from "vue";
 export const useAdminOrderStore = defineStore("adminOrder", {
     state: () => {
+        // return {
+        //     isSelect: ref(null),//驅動
+        //     data: reactive([])
+        // };
         return {
-            isSelect: ref(null),//驅動
-            data: reactive([])
+            data: reactive({}),
+            loginInfo: reactive({}),
+            secondData: reactive({}),
+            visitorsData: reactive({}),
+            thirdData: reactive({}),
+            secondEditData: '',
+            visitorsEditData: reactive({}),
+            thirdEditData: reactive({}),
+            isDefault: ref(false),//默認餐按鈕修改用
+            isSecond: ref(false),
+            isVisitors: ref(false),
+            isThird: ref(false),
+            isChangeDefault: ref(''),
+            isReorderDefault: ref(''),
+            isDefaultEdit: ref(''),
+            isSecondAdd: ref(''),
+            isSecondEdit: ref(''),
+            isVisitorsAdd: ref(''),
+            isVisitorsEdit: ref(''),
+            isThirdAdd: ref(''),
+            isThirdEdit: ref(''),
+            defaultsite_ID: ref(''),
+            default_MealOrder: ref(''),
+            default_MealType: ref(''),
+            isOffcanvasRef: ref(''),
+            isSecondPopEdit: ref(''),
+            isVisitorsPopEdit: ref(''),
+            isThirdPopEdit: ref(''),
+            isThirdPopEdit: ref(''),
+            isGetWorkday: ref('')
         };
     },
     actions: {
